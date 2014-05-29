@@ -24,9 +24,9 @@ class WeatherLogger(object):
             if b > 0:
                 data = self.logger.read(b)
                 self.writeDataToFile(data)
-                return 1
+                return data
             time.sleep(1)
-        return 0
+        return ''
         
             
     def writeDataToFile(self, data):
@@ -39,16 +39,18 @@ class WeatherLogger(object):
         time.sleep(1)
         ret = self.readData()
         if (len(ret) == 0):
-            print 'ERROR: Logger info could not be read!'
+            log('ERROR: Logger info could not be read!')
             return -1
         else:
-            print ret
+            log(ret)
             return 1
 
-  
+def log(string):
+    print currentTime() + " - " + string
+    
 def currentTime():
     ts=time.time()
-    crt = time.strftime("%Y-%m-%d %H:%M:%S.",time.localtime(ts))
+    crt = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(ts))
     return str(crt)
         
 def main():
@@ -58,16 +60,14 @@ def main():
         return 0
         
     max = 100
-    print (currentTime())
-    print ('Start Logging')
+    log('Start Logging')
     while (max > 0):
         max = max-1
-        ret = l.readDataToFile()
-        print (currentTime())
-        if ret == 0:
-            print ('No data received')
+        data = l.readDataToFile()
+        if len(data) == 0:
+            log ('No data received')
         else:
-            print ('Data received')
-    print ('End Logging')
+            log ('Data received: ' + data)
+    log ('End Logging')
 
 main()
