@@ -1,12 +1,12 @@
 #!/usr/bin/python
-from serial import serial
+import serial
 import time
 
 class WeatherLogger(object):
     
     
     def __init__(self, path='/home/volker/weather/weather.log'):
-        self.logger = Serial('/dev/ttyUSB0', baudrate=19200, bytesize=8, stopbits=1, timeout=0 )
+        self.logger = serial.Serial('/dev/ttyUSB0', baudrate=19200, bytesize=8, stopbits=1, timeout=0 )
         self.path = path
     
     def readData(self, maxtime=180):
