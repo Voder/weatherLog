@@ -16,16 +16,18 @@ class WeatherLogger(object):
             return self.logger.read(b)
         return ''
         
-    def readDataToFile(self, maxtime=180):
+    def readDataToFile(self, maxtime=180, sleeptime=30):
+        if sleeptime < 1:
+            return 'ERROR: sleeptime < 1 not allowed';
         t = maxtime
         while t > 0:
-            t = t-1
+            t = t-sleeptime
             b = self.logger.inWaiting()
             if b > 0:
                 data = self.logger.read(b)
                 self.writeDataToFile(data)
                 return data
-            time.sleep(1)
+            time.sleep(sleeptime)
         return ''
         
             
@@ -59,10 +61,10 @@ def main():
     if i < 0:
         return 0
         
-    max = 100
+    #max = 100
     log('Start Logging')
-    while (max > 0):
-        max = max-1
+    while (1==1):
+        #max = max-1
         data = l.readDataToFile()
         if len(data) == 0:
             log ('No data received')
