@@ -4,14 +4,14 @@ import time
 import sqlite3 as db
 
 class WeatherLogger(object):
-    
-    
-    def __init__(self, path='/home/volker/weather/weather.log'):
+
+
+    def __init__(self, path='~/weather/weather.log'):
         self.logger = serial.Serial('/dev/ttyUSB0', baudrate=19200, bytesize=8, stopbits=1, timeout=0 )
         self.path = path
         self.dbPath = 'weather.sqlite'
 
-    
+
     def connectDB(self):
         self.dbConn = db.connect(self.dbPath)
         self.dbCursor = self.dbConn.cursor()
@@ -24,7 +24,7 @@ class WeatherLogger(object):
         if b > 0:
             return self.logger.read(b)
         return ''
-        
+
     def readDataToDB(self, maxtime=180, sleeptime=30):
         if sleeptime < 1:
             return 'ERROR: sleeptime < 1 not allowed'
@@ -53,13 +53,13 @@ class WeatherLogger(object):
         self.dbCursor.execute('insert into weatherdata values(?, ?, ?, ?, ?, ?)', rowdata)
         self.dbConn.commit()
         self.closeDB()
-        
-    
+
+
     def writeDataToFile(self, data):
         with open(self.path,'a') as f:
             f.write(currentTime() + "\n")
             f.write(data)
-    
+
     def logInfo(self):
         self.logger.write("?")
         time.sleep(1)
@@ -73,18 +73,18 @@ class WeatherLogger(object):
 
 def log(string):
     print currentTime() + " - " + string
-    
+
 def currentTime():
     ts=time.time()
     crt = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(ts))
     return str(crt)
-        
+
 def main():
     l = WeatherLogger()
     i = l.logInfo()
     if i < 0:
         return 0
-        
+
     #max = 100
     log('Start Logging')
     while (1==1):
