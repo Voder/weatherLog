@@ -48,9 +48,10 @@ class WeatherLogger(object):
         hum = dataArr[20]
         wind = dataArr[21]
         rain = dataArr[22]
-        rowdata = (None, date, temp, hum, wind, rain)
+        rain_curr = dataArr[23]
+        rowdata = (None, date, temp, hum, wind, rain, rain_curr)
         # save in db
-        self.dbCursor.execute('insert into weatherdata values(?, ?, ?, ?, ?, ?)', rowdata)
+        self.dbCursor.execute('insert into weatherdata values(?, ?, ?, ?, ?, ?, ?)', rowdata)
         self.dbConn.commit()
         self.closeDB()
 
