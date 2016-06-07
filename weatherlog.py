@@ -2,7 +2,14 @@
 import serial
 import time
 import sqlite3 as db
+from ISStreamer.Streamer import Streamer
 
+# --------- User Settings ---------
+BUCKET_NAME = "bucket_name"
+BUCKET_KEY = "bucket_key"
+ACCESS_KEY = "access_key"
+MINUTES_BETWEEN_WRITES = 30
+# ---------------------------------
 class WeatherLogger(object):
 
 
@@ -10,6 +17,8 @@ class WeatherLogger(object):
         self.logger = serial.Serial('/dev/ttyUSB0', baudrate=19200, bytesize=8, stopbits=1, timeout=0 )
         self.path = path
         self.dbPath = 'weather.sqlite'
+        self.streamer = Streamer(bucket_name=BUCKET_NAME, bucket_key=BUCKET_KEY, access_key=ACCESS_KEY)
+        self.streamer.log("Weatherlog Msg", "Start streaming...")
 
 
     def connectDB(self):
@@ -55,6 +64,20 @@ class WeatherLogger(object):
         self.dbConn.commit()
         self.closeDB()
 
+    def writeDataToIS(self, data):
+        dataArr = data.split(';')
+        date = currentTime()
+        temp = dataArr[19]
+        hum = dataArr[20]
+        wind = dataArr[21]
+        rain = dataArr[22]
+        rain_curr = dataArr[23]
+        self.streamer.log("Temperatur(C)", temp)
+        self.streamer.log("Luftfeuchtigkeit(%)", hum)
+        self.streamer.log("Wind(km/h)", wind)
+        self.streamer.log("Regen", rain_curr)
+        self.streamer.log("Regenmenge", rain)
+        self.streamer.flush()
 
     def writeDataToFile(self, data):
         with open(self.path,'a') as f:
@@ -95,6 +118,8 @@ def main():
             log ('No data received')
         else:
             log ('Data received: ' + data)
+            log ('Send to IS...')
+            l.writeDataToIS(data)
     log ('End Logging')
 
 main()
