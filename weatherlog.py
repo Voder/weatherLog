@@ -111,6 +111,7 @@ def main():
 
     #max = 100
     log('Start Logging')
+    lastSentToIS=0
     while (1==1):
         #max = max-1
         data = l.readDataToDB()
@@ -118,8 +119,11 @@ def main():
             log ('No data received')
         else:
             log ('Data received: ' + data)
-            log ('Send to IS...')
-            l.writeDataToIS(data)
+            if (time.time() > (lastSentToIS + MINUTES_BETWEEN_WRITES*60)):
+                log ('Send to IS...')
+                lastSentToIS = time.time()
+                l.writeDataToIS(data)
+
     log ('End Logging')
 
 main()
